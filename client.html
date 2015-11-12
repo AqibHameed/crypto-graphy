@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HMAC-SHA256 Example</title>
+</head>
+<body>
+    <script src="http://crypto.stanford.edu/sjcl/sjcl.js"></script>
+    <script>
+        var sharedSecret, query, signature, hmac, xhr;
+     // No longer secret shared secret ;-)
+        sharedSecret = "super-secret";
+        query = "key=value";
+        hmac = new sjcl.misc.hmac(sjcl.codec.utf8String.toBits(sharedSecret), sjcl.hash.sha256);
+        signature = sjcl.codec.hex.fromBits(hmac.encrypt(query));
+        xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:1337/?" + query);
+        xhr.setRequestHeader("X-Signature", signature);
+        xhr.onload = function () {
+            console.log(xhr.status, xhr.responseText);
+        }
+        xhr.send(null);
+    </script>
+</body>
+</html>
